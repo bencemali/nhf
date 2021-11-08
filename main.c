@@ -1,3 +1,5 @@
+//The whole program is one file for now for simplicity
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -6,18 +8,18 @@
 #include <string.h>
 #include <ctype.h>
 
-typedef enum Type {
-    program,
-    file_in,
-    file_out,
+typedef enum Type { // all commands have a Type
+    program, // first command, and commands preceded by a |
+    file_in, // commands preceded by a <
+    file_out, // commands preceded by a >
 } Type;
 
-typedef struct {
-    int size;
+typedef struct { // variable capable of storing the words of the inputted line
+    int size; // this struct type only exist so that it can store the array's length
     char ** pointer;
 } Word_list;
 
-typedef struct {
+typedef struct { // variable which the proc_list creates when analyzing the word list, basically a map of the input
     int count;
     int * locations;
     Type * types;
@@ -25,8 +27,12 @@ typedef struct {
 
 
 
-
-void line_in(char * line) {
+// this function reads a line of input
+/* later will have to upgrade to read multiple lines when line is ended with '\' */
+// caller has to free() the string
+// other than that pretty straight forward function
+char * line_in(void) {
+    static char * line;
     int size = 20, pozicio = 0;
     char karakter;
     line = (char*) malloc(size * sizeof(char));
@@ -48,14 +54,16 @@ void line_in(char * line) {
             ++pozicio;
         }
     }
+    return line;
 }
 
 
 
-
-void line_to_word(char const * line, Word_list * words) {
-    words->size = 0;
-    words->pointer = (char**) malloc(words->size * sizeof(char*));
+// WORK IN PROGRESS
+Word_list * line_to_word(char * line) {
+    static Word_list words;
+    words.size = 0;
+    words.pointer = (char**) malloc(words.size * sizeof(char*));
 
     int letter_count = 1;
     char * word = (char*) malloc(letter_count * sizeof(char));
@@ -71,9 +79,9 @@ void line_to_word(char const * line, Word_list * words) {
             ++i;
         } else {
             if(word[0] != '\0') {
-                words->size += 1;
-                words->pointer = (char**) realloc(words->pointer, words->size * sizeof(char*));
-                words->pointer[words->size - 1] = word;
+                words.size += 1;
+                words.pointer = (char**) realloc(words.pointer, words.size * sizeof(char*));
+                words.pointer[words.size - 1] = word;
                 word = (char*) malloc(sizeof(char));
                 word[0] = '\0';
                 letter_count = 1;
@@ -83,15 +91,19 @@ void line_to_word(char const * line, Word_list * words) {
     }
 
     if(word[0] != '\0') {
-        words->size += 1;
-        words->pointer = (char**) realloc(words->pointer, words->size * sizeof(char*));
-        words->pointer[words->size - 1] = word;
+        words.size += 1;
+        words.pointer = (char**) realloc(words.pointer, words.size * sizeof(char*));
+        words.pointer[words.size - 1] = word;
     }
+    return &words;
 }
 
 
 
-
+// this function processes the word list, so the exec_input function can make sense of it and execute all commands
+// replaces operators (|, >, <) with NULL so they can be passed to exec() calls as arguments, but leaves them in the word list
+// after i. string is an operator (i+1). string gets a type (command, file_in, file_out)
+// caller has to free result->types, result->locations
 void proc_list(Word_list * word_list, Command_list * result) {
     int command_count = 1;
     result->types = (Type*) malloc(command_count * sizeof(Type*));
@@ -220,23 +232,26 @@ int exec_input(Word_list words, Command_list command_list) {
 
 
 
-
+// this function displays the prompt and call all other functions
 void prompt(void) {
     char hostname[_SC_HOST_NAME_MAX];
     gethostname(hostname, _SC_HOST_NAME_MAX);
-    printf("[%s@%s]:%s$ ", getenv("USER"), hostname, getenv("PWD"));
-    char * line;
-    line_in(line);
-    Word_list words;
-    if(strcmp(words.pointer[0], "quit") == 0) {
+    printf("[%s@%s]:%s$ ", getenv("USER"), hostname, getenv("PWD")); //print prompt
+    char * line = line_in(); // this function gets the line
+    Word_list * words = line_to_word(line); // this function breaks the inputted line into words
+    if(strcmp(words->pointer[0], "quit") == 0) { // if first word of inputted line is quit, then stop the program
         exit(0);
     }
-    line_to_word(line, &words);
-    Command_list commands;
-    proc_list(&words, &commands);
-    exec_input(words, commands);
+    Command_list * commands; /* this variable will store the input, where words of the input are stored in an array,
+                                all commands and arguments end with a NULL, but they are in the same array */
+    proc_list(&words, &commands); // this function processes the array of words
+    exec_input(words, commands); // this function will execute all commands
     
-    prompt();
+    free(line);
+    free(words->pointer);
+    free(commands->locations);
+    free(commands->types);
+    prompt(); // prompt recursively calls itself, so you can type the next command
 }
 
 
