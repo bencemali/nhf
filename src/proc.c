@@ -1,4 +1,4 @@
-#include "proc.h"
+#include "../headers/proc.h"
 
 typedef enum Type {
 	program,

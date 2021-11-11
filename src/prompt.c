@@ -1,4 +1,4 @@
-#include "prompt.h"
+#include "../headers/prompt.h"
 
 void prompt(void) {
     char hostname[_SC_HOST_NAME_MAX];

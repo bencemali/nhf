@@ -1,4 +1,4 @@
-#include "exec.h"
+#include "../headers/exec.h"
 
 int exec_input(Word_list * word_list, Command_list * command_list) {
 	int * pipefds;

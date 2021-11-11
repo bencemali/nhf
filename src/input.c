@@ -1,4 +1,4 @@
-#include "input.h"
+#include "../headers/input.h"
 
 void input(char * dinstring) {
     int size = 20, pozicio = 0;

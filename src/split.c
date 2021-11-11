@@ -1,4 +1,4 @@
-#include "split.h"
+#include "../headers/split.h"
 
 typedef struct Word_list {
     int num;

@@ -7,10 +7,10 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include "split.h"
-#include "input.h"
-#include "proc.h"
-#include "exec.h"
+#include "../headers/split.h"
+#include "../headers/input.h"
+#include "../headers/proc.h"
+#include "../headers/exec.h"
 
 
 int exec_input(Word_list * words, Command_list * command_list) {
