@@ -1,7 +1,8 @@
 #include <errno.h>
 #include "prompt.h"
+//#include "debugmalloc.h"
 
-int main(void) {
+void main(void) {
     //system("clear");
     int prompt_return_value = 0;
 
@@ -9,5 +10,4 @@ int main(void) {
     prompt_return_value = prompt(); //main just calls the prompt function
     }
 
-    return 0;
 }

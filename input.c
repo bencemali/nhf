@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "input.h"
+//#include "debugmalloc.h"
 
 char * input(void) {
     int size = 1;

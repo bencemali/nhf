@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "split.h"
 #include "input.h"
+//#include "debugmalloc.h"
 
 int count_spaces(char * string) {
     int cnt = 0;

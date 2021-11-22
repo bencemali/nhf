@@ -11,14 +11,17 @@
 #include "proc.h"
 
 int exec(Word_list * word_list, Command_list * command_list) {
+    if(command_list->num == 1 && strcmp(word_list->pointer[0], "quit") == 0) {
+        exit(1);
+    }
 	int * pipefds;
 	pipefds = (int*) malloc(command_list->num * 2 * sizeof(int));
-	for(int z = 0; z < (command_list->count * 2); z += 2) {
+	for(int z = 0; z < (command_list->num * 2); z += 2) {
 		pipe(pipefds + z);
 	}
 	int rank;
 	rank = 0;
-	int children[] = (int*)malloc(command_list->num * sizeof(char));
+	int *children = (int*)malloc(command_list->num * sizeof(char));
 	pid_t parentid = getpid();
 	for(int i = 1; i < (command_list->num + 1); ++i) {
 		if(getpid() == parentid) {
@@ -31,38 +34,71 @@ int exec(Word_list * word_list, Command_list * command_list) {
 		}
 	}
 
-	if(rank != 0) {
-		switch(command_list->types[rank - 1]) {
-			case program:
-				if(rank == 1) {
-					for(int i = 1; i < command_list->num; ++i) {
-						if(command_list->num != 1) {
-							if(command_list->types[i] == program || command_list->types[i] == file_out) {
-								for(int j = 1; j < (command_list->num * 2); ++j) {
-									if(j != (2 * i - 1)){
-										close(pipefds + j);
-									}
-								}
-							}
-							if(command_list[i + 1] == file_in) {
-								dup2(pipefds[0], fileno(stdin));
-							}
-							close(pipefds[0]);
-							dup2(pipefds[2 * i - 1], fileno(stdout));
-							close(pipefds[2 * i - 1]);
-							execvp(word_list->pointer[0], word_list->pointer[0]);
-						}
-					}
-				}
-				break;
+    //Determine type and get things done
+    if(rank != 0) {
+
+        //If type is program
+        if(command_list->types[rank - 1] == program) {
+
+            //Get stdin from local pipe, only if...
+            if(rank != 1) {
+                dup2(pipefds[(rank - 1) * 2], fileno(stdin));
+                printf("Rank no. %d, stdin to pipefds[%d]", rank, (rank - 1) * 2);
+            } else {
+                if(command_list->types[1] == file_in) {
+                    dup2(pipefds[0], fileno(stdin));
+                }
+            }
+
+            //Find out if stdout has to be routed to subsequent command
+            if(rank <= (command_list->num - 2)) {
+                if(command_list->types[rank] != file_in) {
+                    // Connect stdout to next command's stdin
+                } else {
+                    // Connect stdout to second next command's stdin
+                }
+            } else if(rank == (command_list->num - 1)) {
+                if(command_list->types[rank] != file_in) {
+                    // Connect stdout to next command's stdin
+                }
+            }
+
+            //Now close all pipe ends
+            for(int i = 0; i < (command_list->num * 2); ++i) {
+                close(pipefds[i]);
+            }
+
+            //Execute program
+            execvp(word_list->pointer[command_list->locations[rank - 1]], word_list->pointer + command_list->locations[rank - 1]);
+        } else if(command_list->types[rank - 1] == file_in) {
+            //If type is file_in
+
+            //Open file
+            FILE *fp;
+            fp = fopen(word_list->pointer[command_list->locations[rank - 1]], "r");
+            dup2(pipefds[(rank * 2) - 3], fileno(stdout));
+
+            //Write file content into previous command's write pipe end
+            while(fwrite(fp, sizeof(char), 1, stdout) == 1);
+
+            for(int i = 0; i < (command_list->num * 2); ++i) {
+                close(pipefds[i]);
+            }
+        } else if(command_list->types[rank - 1] == file_out) {
+            //If type is file_out
+
+            //Open file
+
+            //Overwrite file content with content read from local pipe's read end
+            //Content always comes from previous command
+        }
+    } else {
+		for(int i = 0; i < command_list->num; ++i) {
+			wait(NULL);
 		}
+    return 0;
 	}
 
-	if(rank == 0) {
-		for(int i = 0; i < command_list->num; ++i) {
-			waitpid(children[i]);
-		}
-	}
 }
 
 /* BACKUP
