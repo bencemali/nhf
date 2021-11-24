@@ -1,11 +1,13 @@
-#ifndef LINETOWORD_H
-#define LINETOWORD_H
+#ifndef SPLIT_INCLUDED
+#define SPLIT_INCLUDED
 
 typedef struct Word_list {
     int num;
     char **pointer;
 } Word_list;
 
-void split(char * string, Word_list * result);
+int count_spaces(char * string);
+
+char ** split(char * string, int cnt);
 
 #endif

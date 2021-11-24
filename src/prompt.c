@@ -1,22 +1,60 @@
-#include "../headers/prompt.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <string.h>
+#include <ctype.h>
+#include "../include/prompt.h"
+#include "../include/input.h"
+#include "../include/split.h"
+#include "../include/proc.h"
+#include "../include/exec.h"
+#include "../include/debugmalloc.h"
 
-void prompt(void) {
+int prompt(void) {
     char hostname[_SC_HOST_NAME_MAX];
     gethostname(hostname, _SC_HOST_NAME_MAX);
     printf("[%s@%s]:%s$ ", getenv("USER"), hostname, getenv("PWD")); //print prompt
-    char * line = line_in(); // this function gets the line
-    Word_list * words = line_to_word(line); // this function breaks the inputted line into words
-    if(strcmp(words->pointer[0], "quit") == 0) { // if first word of inputted line is quit, then stop the program
-        exit(0);
-    }
-    Command_list * commands; /* this variable will store the input, where words of the input are stored in an array,
-                                all commands and arguments end with a NULL, but they are in the same array */
-    proc_list(words, commands); // this function processes the array of words
-    exec_input(words, commands); // this function will execute all commands
-
+    char * line = input();
+    Word_list words;
+    words.num = count_spaces(line);
+    printf("Number of words: %d\n", words.num);
+    words.pointer = split(line, words.num);
     free(line);
-    free(words->pointer);
-    free(commands->locations);
-    free(commands->types);
-    prompt(); // prompt recursively calls itself, so you can type the next command
+    if(words.pointer == NULL) {
+        return 0;
+    }
+    Command_list commands;
+    proc(&words, &commands);
+    printf("Command count: %d\n", commands.num);
+    for(int i = 0; i < commands.num; ++i) {
+        if(commands.types[i] == program) {
+            printf("%d: \n\tprogram\n\tIndex: %d\n", i, commands.locations[i]);
+        } else if(commands.types[i] == file_out) {
+            printf("%d: \n\tfile_out\n\tIndex: %d\n", i, commands.locations[i]);
+        } else if(commands.types[i] == file_in) {
+            printf("%d: \n\tfile_in\n\tIndex: %d\n", i, commands.locations[i]);
+        }
+    }
+
+    //EXEC
+    int exec_return = exec(&words, &commands);
+
+    //FREEing
+    for(int i = 0; i < words.num; ++i) {
+        if(words.pointer[i] != NULL) {
+            free(words.pointer[i]);
+        }
+    }
+    free(words.pointer);
+    free(commands.types);
+    free(commands.locations);
+
+    //RETURN
+    if(exec_return == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
 }

@@ -1,6 +1,6 @@
 #ifndef PROMPT_INCLUDED
-#define
+#define PROMPT_INCLUDED
 
-void prompt(void);
+int prompt(void);
 
 #endif
