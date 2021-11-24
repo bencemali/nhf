@@ -25,8 +25,6 @@ char * input(void) {
 
     line = space_collapse(line);
 
-    printf("%s\n", line);
-
     return line;
 }
 

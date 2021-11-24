@@ -27,7 +27,8 @@ int prompt(void) {
     }
     Command_list commands;
     proc(&words, &commands);
-    printf("Command count: %d\n", commands.num);
+    //printf("Command count: %d\n", commands.num);
+    /*
     for(int i = 0; i < commands.num; ++i) {
         if(commands.types[i] == program) {
             printf("%d: \n\tprogram\n\tIndex: %d\n", i, commands.locations[i]);
@@ -37,6 +38,7 @@ int prompt(void) {
             printf("%d: \n\tfile_in\n\tIndex: %d\n", i, commands.locations[i]);
         }
     }
+    */
 
     //EXEC
     int exec_return = exec(&words, &commands);
