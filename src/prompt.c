@@ -19,7 +19,6 @@ int prompt(void) {
     char * line = input();
     Word_list words;
     words.num = count_spaces(line);
-    printf("Number of words: %d\n", words.num);
     words.pointer = split(line, words.num);
     free(line);
     if(words.pointer == NULL) {

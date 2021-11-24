@@ -66,9 +66,8 @@ void connect_stdin(int * pipefds, int rank, int diff) {
 
 
 int exec(Word_list * word_list, Command_list * command_list) {
-    if(command_list->num == 1 && strcmp(word_list->pointer[0], "quit") == 0) {
-        
-        exit(EXIT_WITH_QUIT);
+    if(command_list->num == 1 && (strcmp(word_list->pointer[0], "quit") == 0 || strcmp(word_list->pointer[0], "exit") == 0)) {
+        return(EXIT_WITH_QUIT);
     }
 	int * pipefds; pipefds = (int*) malloc(command_list->num * 2 * sizeof(int)); for(int z = 0; z < (command_list->num * 2); z += 2) {
 		pipe(pipefds + z);
