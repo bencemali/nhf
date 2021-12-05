@@ -1,6 +1,10 @@
 #ifndef PROMPT_INCLUDED
 #define PROMPT_INCLUDED
+#include "var.h"
 
-int prompt(void);
+
+void print_prompt(void);
+
+int prompt(VarList * varlist, VarList * aliaslist);
 
 #endif

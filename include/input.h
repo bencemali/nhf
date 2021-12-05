@@ -1,7 +1,7 @@
 #ifndef INPUT_INCLUDED
 #define INPUT_INCLUDED
 
-char * input(void);
+int input(char ** line);
 
 char * space_collapse(char * string);
 

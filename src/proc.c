@@ -13,10 +13,11 @@ void proc(Word_list * word_list, Command_list * result) {
 	if(word_list) {
 		result->num = 1;
 	}
-	for(int i = 0; i < word_list->num; ++i) { // This for loop counts how many commands there are
+	for(int i = 0; word_list->pointer[i] != NULL; ++i) { // This for loop counts how many commands there are
 		if(strcmp(word_list->pointer[i], "|") == 0
 		|| strcmp(word_list->pointer[i], ">") == 0
-		|| strcmp(word_list->pointer[i], "<") == 0) {
+		|| strcmp(word_list->pointer[i], "<") == 0
+		|| strcmp(word_list->pointer[i], ">>") == 0) {
 			++(result->num);
 		}
 	}
@@ -43,6 +44,12 @@ void proc(Word_list * word_list, Command_list * result) {
 			word_list->pointer[i] = NULL;
 			++prog_count;
 			result->types[prog_count] = file_in;
+			result->locations[prog_count] = i + 1;
+		} else if(strcmp(word_list->pointer[i], ">>") == 0) {
+			free(word_list->pointer[i]);
+			word_list->pointer[i] = NULL;
+			++prog_count;
+			result->types[prog_count] = file_append;
 			result->locations[prog_count] = i + 1;
 		}
 	}

@@ -5,57 +5,106 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "../include/prompt.h"
 #include "../include/input.h"
 #include "../include/split.h"
 #include "../include/proc.h"
 #include "../include/exec.h"
 #include "../include/debugmalloc.h"
+#include "../include/var.h"
 
-int prompt(void) {
-    char hostname[_SC_HOST_NAME_MAX];
-    gethostname(hostname, _SC_HOST_NAME_MAX);
-    printf("[%s@%s]:%s$ ", getenv("USER"), hostname, getenv("PWD")); //print prompt
-    char * line = input();
+#define EXIT_WITH_QUIT 22 //returned if exit or quit was inputted
+#define REPROMPT_RETURN_VALUE 0 //returned if process has to display a new prompt
+#define NO_PROMPT_RETURN_VALUE 33 //returned if the process doesn't have to display the next prompt
+#define NO_COMMAND_WITH_TYPE 0 //returned if there isn't a command looked for
+#define SOMETHING_WRONG 999 //returned if something unexpectedly went wrong
+#define EXECUTE_ERR 420 //returned if couldn't execute program
+#define CD_RETURN 343 //returned if input is 'cd' and child process doesn't need to do anything
+#define HISTORY_RETURN 555 //will be used later
+#define OK_RETURN 777 //standard return value
+
+
+int prompt(VarList * varlist, VarList * aliaslist) {
+
+    //PRINT PROMPT
+    print_prompt();
+
+    //GET INPUT
+    char * line;
+    int input_ret = input(&line);
+    switch(input_ret) {
+        case NO_PROMPT_RETURN_VALUE:
+            printf("\n\n\tSession ended with 'Ctrl+d'\n");
+            return NO_PROMPT_RETURN_VALUE;
+            break;
+        case REPROMPT_RETURN_VALUE:
+            return REPROMPT_RETURN_VALUE;
+            break;
+        default:
+            break;
+    }
+
+    //SPLIT INPUT INTO AN ARRAY OF WORDS
     Word_list words;
     words.num = count_spaces(line);
-    words.pointer = split(line, words.num);
-    free(line);
-    if(words.pointer == NULL) {
-        return 0;
+    bool var_assignment = false; //variable signaling the need to create shell variable
+    words.pointer = split(line, &words.num, &var_assignment, varlist); //split the string
+    if(words.pointer == NULL) { //if input is only enter reprompt
+        return REPROMPT_RETURN_VALUE;
     }
+
+    //PROC
     Command_list commands;
-    proc(&words, &commands);
-    //printf("Command count: %d\n", commands.num);
-    /*
-    for(int i = 0; i < commands.num; ++i) {
-        if(commands.types[i] == program) {
-            printf("%d: \n\tprogram\n\tIndex: %d\n", i, commands.locations[i]);
-        } else if(commands.types[i] == file_out) {
-            printf("%d: \n\tfile_out\n\tIndex: %d\n", i, commands.locations[i]);
-        } else if(commands.types[i] == file_in) {
-            printf("%d: \n\tfile_in\n\tIndex: %d\n", i, commands.locations[i]);
-        }
-    }
-    */
+    proc(&words, &commands); //process separators (|, >, <, >>)
 
     //EXEC
-    int exec_return = exec(&words, &commands);
+    int exec_return = exec(&words, &commands, var_assignment, varlist, aliaslist); //execute the programs
 
-    //FREEing
+
+    //FREE EVERYTHING
     for(int i = 0; i < words.num; ++i) {
         if(words.pointer[i] != NULL) {
             free(words.pointer[i]);
         }
     }
+    free(line);
     free(words.pointer);
     free(commands.types);
     free(commands.locations);
 
-    //RETURN
-    if(exec_return == 0) {
-        return 0;
+
+    //RETURN or ABORT
+    if(exec_return == REPROMPT_RETURN_VALUE) {
+        return REPROMPT_RETURN_VALUE;
+    } else if(exec_return == EXECUTE_ERR
+            ||exec_return == CD_RETURN
+            ||exec_return == HISTORY_RETURN){
+        abort();
+    } else if(exec_return == SOMETHING_WRONG) {
+        return NO_PROMPT_RETURN_VALUE;
     } else {
-        return 1;
+        return NO_PROMPT_RETURN_VALUE;
+    }
+}
+
+//Function for printing out the shell prompt
+void print_prompt(void) {
+    char hostname[_SC_HOST_NAME_MAX];
+    gethostname(hostname, _SC_HOST_NAME_MAX); //Get hostname env variable
+    char cwd[256];
+    getcwd(cwd, sizeof(cwd)); //Get cwd env variable
+
+    //If inside home directory replace home with ~
+    if(strstr(cwd, getenv("HOME")) != NULL) {
+        char * new_path = (char*) malloc(strlen(cwd) - strlen(getenv("HOME") + 2));
+        new_path[0] = '~';
+        new_path[1] = '\0';
+        strcat(new_path, cwd + strlen(getenv("HOME")));
+        printf("[%s@%s]:%s$ ", getenv("USER"), hostname, new_path); //print prompt
+        free(new_path);
+    } else {
+        //print out the prompt
+        printf("[%s@%s]:%s$ ", getenv("USER"), hostname, cwd); //print prompt
     }
 }

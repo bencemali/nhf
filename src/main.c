@@ -1,14 +1,35 @@
 #include <errno.h>
 #include "../include/prompt.h"
 #include "../include/debugmalloc.h"
+#include "../include/var.h"
+
+#define EXIT_WITH_QUIT 22 //returned if exit or quit was inputted
+#define REPROMPT_RETURN_VALUE 0 //returned if process has to display a new prompt
+#define NO_PROMPT_RETURN_VALUE 33 //returned if the process doesn't have to display the next prompt
+#define NO_COMMAND_WITH_TYPE 0 //returned if there isn't a command looked for
+#define SOMETHING_WRONG 999 //returned if something unexpectedly went wrong
+#define EXECUTE_ERR 420 //returned if couldn't execute program
+#define CD_RETURN 343 //returned if input is 'cd' and child process doesn't need to do anything
+#define HISTORY_RETURN 555 //will be used later
+#define OK_RETURN 777 //standard return value
 
 int main(void) {
-    //system("clear");
-    int prompt_return_value = 0;
+    int prompt_return_value = 0; //variable storing the return value that determines if process prints next prompt
 
-    while(prompt_return_value == 0) {
-    prompt_return_value = prompt(); //main just calls the prompt function
+    VarList varlist; //Linked list storing shell variables
+    varlist.begin = NULL;
+    varlist.end = NULL;
+    VarList aliaslist; //Linked list storing aliases
+    aliaslist.begin = NULL;
+    aliaslist.end = NULL;
+
+    while(prompt_return_value == REPROMPT_RETURN_VALUE) { //while not exit or quit input
+    prompt_return_value = prompt(&varlist, &aliaslist); //main just calls the prompt function
     }
+    printf("\n");
+
+    free_varlist(&varlist); //free linked lists
+    free_varlist(&aliaslist);
 
     return 0;
 }
