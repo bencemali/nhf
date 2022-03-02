@@ -3,6 +3,7 @@
 #include "proc.h"
 #include "split.h"
 #include "var.h"
+#include "macros.h"
 
 void close_pipes(int size, int * pipefds);
 

@@ -176,9 +176,9 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
             execvp(word_list->pointer[command_list->locations[rank - 1]], word_list->pointer + command_list->locations[rank - 1]);
         }
         if(var_assignment && rank == 1) {
-            return VAR_ASSIGNMENT;
+            return OK_RETURN;
         } else if(strcmp(word_list->pointer[command_list->locations[rank - 1]], "alias") == 0) {
-            return VAR_ASSIGNMENT;
+            return OK_RETURN;
         } else if(strcmp(word_list->pointer[command_list->locations[rank - 1]], "cd") == 0) {
             return CD_RETURN;
         } 
