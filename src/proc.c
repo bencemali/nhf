@@ -4,10 +4,10 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include "../include/proc.h"
-#include "../include/split.h"
-#include "../include/input.h"
-#include "../include/macros.h"
+#include "proc.h"
+#include "split.h"
+#include "input.h"
+#include "macros.h"
 
 void proc(Word_list * word_list, Command_list * result) {
 	if(word_list) {

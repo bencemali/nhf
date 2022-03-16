@@ -1,8 +1,8 @@
 #include <errno.h>
-#include "../include/prompt.h"
-#include "../include/var.h"
 #include <stdio.h>
-#include "../include/macros.h"
+#include "prompt.h"
+#include "var.h"
+#include "macros.h"
 
 int main(void) {
     int prompt_return_value = 0; //variable storing the return value that determines if process prints next prompt

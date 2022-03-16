@@ -5,12 +5,12 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include "../include/exec.h"
-#include "../include/split.h"
-#include "../include/input.h"
-#include "../include/proc.h"
-#include "../include/var.h"
-#include "../include/macros.h"
+#include "exec.h"
+#include "split.h"
+#include "input.h"
+#include "proc.h"
+#include "var.h"
+#include "macros.h"
 
 
 //Closes ALL pipe ends
