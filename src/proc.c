@@ -7,6 +7,7 @@
 #include "../include/proc.h"
 #include "../include/split.h"
 #include "../include/input.h"
+#include "../include/macros.h"
 
 void proc(Word_list * word_list, Command_list * result) {
 	if(word_list) {

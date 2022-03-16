@@ -5,16 +5,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "../include/input.h"
-
-#define EXIT_WITH_QUIT 22
-#define REPROMPT_RETURN_VALUE 0
-#define NO_PROMPT_RETURN_VALUE 33
-#define NO_COMMAND_WITH_TYPE 0
-#define SOMETHING_WRONG 999
-#define EXECUTE_ERR 420
-#define CD_RETURN 343
-#define HISTORY_RETURN 555
-#define OK_RETURN 777
+#include "../include/macros.h"
 
 
 //function for reading a line of input dynamically

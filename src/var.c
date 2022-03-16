@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "../include/var.h"
 #include "../include/split.h"
+#include "../include/macros.h"
 
 //functio for adding variable to either shell variable list, or alias list
 void add_var(VarList * varlist, char * name, char * value) {
