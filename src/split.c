@@ -9,7 +9,6 @@
 #include "../include/split.h"
 #include "../include/input.h"
 #include "../include/var.h"
-#include "../include/debugmalloc.h"
 
 //function for counting spaces in a string
 //used to determine number of words

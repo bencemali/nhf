@@ -9,7 +9,6 @@
 #include "../include/split.h"
 #include "../include/input.h"
 #include "../include/proc.h"
-#include "../include/debugmalloc.h"
 #include "../include/var.h"
 
 

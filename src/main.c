@@ -1,7 +1,7 @@
 #include <errno.h>
 #include "../include/prompt.h"
-#include "../include/debugmalloc.h"
 #include "../include/var.h"
+#include <stdio.h>
 
 #define EXIT_WITH_QUIT 22 //returned if exit or quit was inputted
 #define REPROMPT_RETURN_VALUE 0 //returned if process has to display a new prompt
@@ -26,7 +26,6 @@ int main(void) {
     while(prompt_return_value == REPROMPT_RETURN_VALUE) { //while not exit or quit input
     prompt_return_value = prompt(&varlist, &aliaslist); //main just calls the prompt function
     }
-    printf("\n");
 
     free_varlist(&varlist); //free linked lists
     free_varlist(&aliaslist);

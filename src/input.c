@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "../include/input.h"
-#include "../include/debugmalloc.h"
 
 #define EXIT_WITH_QUIT 22
 #define REPROMPT_RETURN_VALUE 0
