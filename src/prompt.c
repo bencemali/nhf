@@ -6,13 +6,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "prompt.h"
-#include "input.h"
-#include "split.h"
-#include "proc.h"
-#include "exec.h"
-#include "var.h"
-#include "macros.h"
+#include "include/prompt.h"
+#include "include/input.h"
+#include "include/split.h"
+#include "include/proc.h"
+#include "include/exec.h"
+#include "include/var.h"
+#include "include/macros.h"
 
 int prompt(VarList * varlist, VarList * aliaslist) {
 

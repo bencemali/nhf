@@ -6,9 +6,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "split.h"
-#include "input.h"
-#include "var.h"
+#include "include/split.h"
+#include "include/input.h"
+#include "include/var.h"
 
 //function for counting spaces in a string
 //used to determine number of words

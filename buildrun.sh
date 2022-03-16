@@ -1,4 +1,3 @@
 #!/bin/bash
 
-clear && gcc -Wall -I ./include/ -c src/*.c && gcc -Wall -I ./include/ -o emulator *.o && rm *.o && ./emulator
-#make emulator && ./emulator
+clear && gcc -Wall -g -I ./ -c src/*.c && gcc -Wall -g -I ./ -o emulator *.o && rm *.o && ./emulator

@@ -4,8 +4,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "input.h"
-#include "macros.h"
+#include "include/input.h"
+#include "include/macros.h"
 
 
 //function for reading a line of input dynamically

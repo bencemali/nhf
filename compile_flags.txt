@@ -2,4 +2,4 @@
 -Wextra
 -g
 -I
-include/
+./

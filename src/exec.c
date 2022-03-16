@@ -5,12 +5,12 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include "exec.h"
-#include "split.h"
-#include "input.h"
-#include "proc.h"
-#include "var.h"
-#include "macros.h"
+#include "include/exec.h"
+#include "include/split.h"
+#include "include/input.h"
+#include "include/proc.h"
+#include "include/var.h"
+#include "include/macros.h"
 
 
 //Closes ALL pipe ends
@@ -107,17 +107,17 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
     }
 
     //PIPE
-	int * pipefds; //array for storing pipe file descriptors
+    int * pipefds; //array for storing pipe file descriptors
     pipefds = (int*) malloc(command_list->num * 2 * sizeof(int)); for(int z = 0; z < (command_list->num * 2); z += 2) {
-		pipe(pipefds + z);
-	}
+        pipe(pipefds + z);
+    }
 
     //FORKING
-	int rank; //variable for distinguishing process'
-	rank = 0;
-	pid_t parentid = getpid(); //variable storing parent's pid
-	for(int i = 1; i < (command_list->num + 1); ++i) {
-		if(getpid() == parentid) { //only parent forks
+    int rank; //variable for distinguishing process'
+    rank = 0;
+    pid_t parentid = getpid(); //variable storing parent's pid
+    for(int i = 1; i < (command_list->num + 1); ++i) {
+        if(getpid() == parentid) { //only parent forks
             if(command_list->types[i - 1] == program) {
                 fork();
                 if(getpid() != parentid) {
@@ -125,8 +125,8 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
                 } else {
                 }
             }
-		}
-	}
+        }
+    }
 
     //CHILDREN
     if(rank != 0) {
@@ -171,7 +171,7 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
         } else if(strcmp(word_list->pointer[command_list->locations[rank - 1]], "cd") == 0) {
             return CD_RETURN;
         } 
-            /*else if(strcmp(word_list->pointer[command_list->locations[rank - 1]], "history") == 0) {
+        /*else if(strcmp(word_list->pointer[command_list->locations[rank - 1]], "history") == 0) {
             FILE * shell_history;
             shell_history = fopen("~/shell_history", "r");
             if(shell_history == NULL) {
@@ -184,7 +184,7 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
             fclose(shell_history);
             return HISTORY_RETURN;
         }*/ 
-            else {
+    else {
             int exec_return = execvp(word_list->pointer[command_list->locations[rank - 1]], word_list->pointer + command_list->locations[rank - 1]);
             if(exec_return == -1) {
                 fprintf(stderr, "\n\tCommand not found\n\n");
@@ -192,7 +192,7 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
             }
         }
 
-    //PARENT
+        //PARENT
     } else {
         if(strcmp(word_list->pointer[0], "alias") == 0 && !var_assignment) { //if there is need to create alias
             add_var(aliaslist, word_list->pointer[1], word_list->pointer[2]);
@@ -222,11 +222,11 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
         }
         close_pipes(command_list->num * 2, pipefds);
         //free(children);
-		for(int i = 0; i < command_list->num; ++i) {
-			wait(NULL); //wait for children to finish execution
-		}
+        for(int i = 0; i < command_list->num; ++i) {
+        wait(NULL); //wait for children to finish execution
+        }
         return REPROMPT_RETURN_VALUE; //return to display next prompt
-	}
+    }
 
     return 2; //something wrong
 }
