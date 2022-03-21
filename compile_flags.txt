@@ -1,5 +1,4 @@
 -Wall
 -Wextra
 -g
--I
-./
+-I./
