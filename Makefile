@@ -1,6 +1,6 @@
-CXX = gcc
-#CXX = clang
-CXXFLAGS = -Wall -pedantic -Wextra -Werror -g -O0 -I./
+CC = gcc
+#CC = clang
+CCFLAGS = -Wall -pedantic -Wextra -Werror -g -O0 -I./
 LDFLAGS = -g -O0 -I./
 
 PROG = emulator
@@ -12,15 +12,15 @@ SRCS = $(wildcard $(SRCDIR)*.c)
 OBJS = $(SRCS:./src/%.c=./obj/%.o)
 
 $(PROG): $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $@
+	$(CC) $(LDFLAGS) $(OBJS) -o $@
 
 $(OBJDIR)%.o: $(SRCDIR)%.c $(HEADS)
-	mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+#mkdir -p $(OBJDIR)
+	$(CC) $(CCFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
-	rm -rf $(OBJDIR) $(PROG)
+	rm -rf $(OBJS) $(PROG)
 
 .PHONY: run
 run: $(PROG)
