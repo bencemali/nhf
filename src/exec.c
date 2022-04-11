@@ -184,7 +184,7 @@ int exec(Word_list * word_list, Command_list * command_list, bool var_assignment
             fclose(shell_history);
             return HISTORY_RETURN;
         }*/ 
-    else {
+        else {
             int exec_return = execvp(word_list->pointer[command_list->locations[rank - 1]], word_list->pointer + command_list->locations[rank - 1]);
             if(exec_return == -1) {
                 fprintf(stderr, "\n\tCommand not found\n\n");
