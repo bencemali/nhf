@@ -1,7 +1,7 @@
 CC = gcc
 #CC = clang
-CCFLAGS = -Wall -pedantic -Wextra -Werror -g -O0 -I./
-LDFLAGS = -g -O0 -I./
+CCFLAGS = -Wall -pedantic -Wextra -Werror -g -O0 -I.
+LDFLAGS = -g -O0 -I.
 
 PROG = emulator
 OBJDIR = ./obj/
@@ -14,9 +14,11 @@ OBJS = $(SRCS:./src/%.c=./obj/%.o)
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@
 
-$(OBJDIR)%.o: $(SRCDIR)%.c $(HEADS)
-#mkdir -p $(OBJDIR)
+$(OBJDIR)%.o: $(SRCDIR)%.c $(HEADS) $(OBJDIR)
 	$(CC) $(CCFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir -p $@
 
 .PHONY: clean
 clean:
