@@ -1,4 +1,5 @@
 CXX = gcc
+#CXX = clang
 CXXFLAGS = -Wall -pedantic -Wextra -Werror -g -O0 -I./
 LDFLAGS = -g -O0 -I./
 
@@ -19,4 +20,8 @@ $(OBJDIR)%.o: $(SRCDIR)%.c $(HEADS)
 
 .PHONY: clean
 clean:
-	rm -rf $(OBJS) $(PROG)
+	rm -rf $(OBJDIR) $(PROG)
+
+.PHONY: run
+run: $(PROG)
+	./$(PROG)

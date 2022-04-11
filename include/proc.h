@@ -20,3 +20,4 @@ typedef struct Command_list {
 void proc(Word_list * word_list, Command_list * result);
 
 #endif
+

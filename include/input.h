@@ -6,3 +6,4 @@ int input(char ** line);
 char * space_collapse(char * string);
 
 #endif
+

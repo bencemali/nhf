@@ -14,3 +14,4 @@ int count_spaces(char * string);
 char ** split(char * string, int * num_of_spaces, bool * var_assignment, VarList * varlist);
 
 #endif
+

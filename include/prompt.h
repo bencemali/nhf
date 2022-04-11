@@ -8,3 +8,4 @@ void print_prompt(void);
 int prompt(VarList * varlist, VarList * aliaslist);
 
 #endif
+

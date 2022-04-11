@@ -18,3 +18,4 @@ int stdin_redirect(int * pipefds, Word_list * words, Command_list * commands, in
 int exec(Word_list * word_list, Command_list * command_list, bool var_assignment, VarList * varlist, VarList * aliaslist);
 
 #endif
+
